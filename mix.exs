@@ -19,6 +19,6 @@ defmodule LightningTalkElixir.MixProject do
   end
 
   defp deps do
-    []
+    [{:benchee, "~> 1.0", only: :dev}]
   end
 end

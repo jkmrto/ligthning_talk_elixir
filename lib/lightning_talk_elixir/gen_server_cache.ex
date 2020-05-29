@@ -2,7 +2,7 @@ defmodule LightningTalkElixir.GenServerCache do
   use GenServer
 
   def start_link(_arg) do
-    GenServer.start_link(__MODULE__, [], [])
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
@@ -10,8 +10,21 @@ defmodule LightningTalkElixir.GenServerCache do
     {:ok, state}
   end
 
-  def handle_cast({:write, {key, value}}, state) do
+  def read(key) do
+    GenServer.call(__MODULE__, {:read, key})
+  end
+
+  def write({key, value}) do
+    GenServer.call(__MODULE__, {:write, {key, value}})
+  end
+
+  def handle_call({:write, {key, value}}, _from, state) do
     state = Map.put(state, key, value)
-    {:noreply, state}
+    {:reply, value, state}
+  end
+
+  def handle_call({:read, key}, _from, state) do
+    value = Map.get(state, key, nil)
+    {:reply, value, state}
   end
 end
